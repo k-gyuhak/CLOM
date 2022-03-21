@@ -76,3 +76,6 @@ TIL
 | CLOM(-c) | 99.92 | 98.66 | 91.88 | 94.41 | 68.40 | 72.20 |
 
 CLOM and CLOM(-c) are the same as calibration does not affect TIL performance.
+
+# Acknowledgement
+The code uses the source code from the [CSI](https://github.com/alinlab/CSI) and [HAT](https://github.com/joansj/hat).
