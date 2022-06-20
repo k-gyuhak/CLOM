@@ -82,9 +82,10 @@ elif P.optimizer == 'adam':
     optimizer = optim.Adam(model.parameters(), lr=P.lr_init, betas=(.9, .999), weight_decay=P.weight_decay)
     lr_decay_gamma = 0.3
 elif P.optimizer == 'lars':
-    from torchlars import LARS
+    # from torchlars import LARS
+    from .lars_optimizer import LARC
     base_optimizer = SGD_hat(model.parameters(), lr=P.lr_init, momentum=0.9, weight_decay=P.weight_decay)
-    optimizer = LARS(base_optimizer, eps=1e-8, trust_coef=0.001)
+    optimizer = LARC(base_optimizer, eps=1e-8, trust_coefficient=0.001)
     lr_decay_gamma = 0.1
 else:
     raise NotImplementedError()

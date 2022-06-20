@@ -11,6 +11,8 @@ P.logger.print(P)
 
 if P.model == 'resnet18':
     from mask_ops import *
+elif P.model == 'mlp':
+    from mask_ops_mlp import *
 else:
     raise NotImpelementedError("HAT is only impelemented for ResNet-18")
 # from mask_ops import *
