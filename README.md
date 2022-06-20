@@ -14,7 +14,6 @@ The code has been tested on two different machines with
 - tensorboardx=2.1
 - apex=0.1
 - diffdist=0.1
-- torchlars=0.1.2
 - gdown=4.4.0
 
 2. 1x RTX 3090
@@ -24,7 +23,6 @@ The code has been tested on two different machines with
 - cudatoolkit=11.0.221
 - tensorboardx=2.1
 - diffdist=0.1
-- torchlars=0.1.2
 - gdown=4.4.0
 
 Please install the necessary packages
