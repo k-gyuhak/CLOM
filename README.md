@@ -80,6 +80,7 @@ CLOM and CLOM(-c) are the same as calibration does not affect TIL performance.
 
 # Cite
 If you found our paper useful, please cite it!
+```bibtex
 @InProceedings{Kim_2022_CVPR,
     author    = {Kim, Gyuhak and Esmaeilpour, Sepideh and Xiao, Changnan and Liu, Bing},
     title     = {Continual Learning Based on OOD Detection and Task Masking},
@@ -88,6 +89,7 @@ If you found our paper useful, please cite it!
     year      = {2022},
     pages     = {3856-3866}
 }
+```
 
 # Acknowledgement
 The code uses the source code from [CSI](https://github.com/alinlab/CSI) and [HAT](https://github.com/joansj/hat).
