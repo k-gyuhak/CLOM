@@ -274,6 +274,7 @@ class AUCTracker:
         self.print = P.logger.print
         self.mat = np.zeros((P.n_tasks * 2 + 1, P.n_tasks * 2 + 1)) - 100
         self.n_tasks = P.n_tasks
+        self.last_id = 0
 
     def update(self, acc, task_id, p_task_id):
         """
@@ -281,12 +282,14 @@ class AUCTracker:
             task_id: int, current task id
             p_task_id: int, previous task's task id
         """
+        self.last_id = max([self.last_id, p_task_id])
+
         self.mat[task_id, p_task_id] = acc
 
         # Compute average
         self.mat[task_id, -1] = np.mean(np.concatenate([
                                                         self.mat[task_id, :task_id],
-                                                        self.mat[task_id, task_id + 1:self.n_tasks]
+                                                        self.mat[task_id, task_id + 1:self.last_id + 1]
                                                         ]))
 
         # # Compute forgetting
@@ -314,3 +317,34 @@ class AUCTracker:
             print("{:.2f}".format(self.mat[-1, -1]))
         else:
             raise NotImplementedError("Type must be 'acc'")
+
+def compute_auc(in_scores, out_scores):
+    from sklearn.metrics import roc_auc_score
+    # Return auc e.g. auc=0.95
+    if isinstance(in_scores, list):
+        in_scores = np.concatenate(in_scores)
+    if isinstance(out_scores, list):
+        out_scores = np.concatenate(out_scores)
+
+    labels = np.concatenate([np.ones_like(in_scores),
+                             np.zeros_like(out_scores)])
+    try:
+        auc = roc_auc_score(labels, np.concatenate((in_scores, out_scores)))
+    except ValueError:
+        print("Input contains NaN, infinity or a value too large for dtype('float64').")
+        auc = -0.99
+    return auc
+
+def auc(score_dict, task_id, auc_tracker):
+    """
+        AUC: AUC_ij = output values of task i's heads using i'th task data (IND)
+                      vs output values of task i's head using j'th task data (OOD)
+        NOTE 
+    """
+    in_scores = score_dict[task_id][:, task_id]
+
+    for k, val in score_dict.items():
+        if k != task_id:
+            ood_scores = val[:, task_id]
+            auc_value = compute_auc(in_scores, ood_scores)
+            auc_tracker.update(auc_value * 100, task_id, k)

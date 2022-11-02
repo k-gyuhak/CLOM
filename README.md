@@ -1,6 +1,9 @@
 # CLOM
 
-This is the official repository of Continual Learning Based on OOD Detection and Task Masking ([CLOM](https://arxiv.org/abs/2203.09450)).
+This is the official repository of Continual Learning Based on OOD Detection and Task Masking ([CLOM](https://arxiv.org/abs/2203.09450)) (CVPRW 2022)
+
+# Note
+Check out our new paper ([link](url)) published at NeurIPS 2022. It provides a theoretical analysis/justification/generalization of the proposed method CLOM and all other CIL methods.
 
 # Environments
 
@@ -41,7 +44,7 @@ For mixed precision, use --amp
 # Evaluation using pre-trained models
 Please download the pre-trained models and calibration parameters by running download_pretrained_models.py or download manually from [link](https://drive.google.com/drive/folders/1182VgriR841mvW2LXiARTSoBvbPho4Pf). The models and calibration parameters need to be saved under ./logs/DATASET/linear_task_TASK_ID, where DATASET are one of [mnist, cifar10, cifar100_10t, cifar100_20t, tinyImagenet_5t, tinyImageNet_10t] and TASK_ID is the last task id in the experiment (e.g. 9 for cifar100_10t).
 
-For CIL of memory free method CLOM(-c), run the following line
+For CIL of exemplar-free method CLOM(-c), run the following line
 ```
 python eval.py --mode cil --dataset cifar10 --model resnet18 --cil_task 4 --printfn 'cil.txt' --all_dataset --disable_cal
 ```
@@ -53,10 +56,10 @@ python eval.py --mode cil --dataset cifar10 --model resnet18 --cil_task 4 --prin
 
 For TIL, run the following line
 ```
-python eval.py --mode test_marginalized_acc --dataset cifar10 --model cifar10 --t 4 --all_dataset --printfn 'til.txt'
+python eval.py --mode test_marginalized_acc --dataset cifar10 --model resnet18 --t 4 --all_dataset --printfn 'til.txt'
 ```
 
-You may change --dataset, --model, --cil_task for other experiments
+You may change --dataset, --cil_task for other experiments
 
 # Results
 The provided pre-trained models give the following results
@@ -74,6 +77,17 @@ TIL
 | CLOM(-c) | 99.92 | 98.66 | 91.88 | 94.41 | 68.40 | 72.20 |
 
 CLOM and CLOM(-c) are the same as calibration does not affect TIL performance.
+
+# Cite
+If you found our paper useful, please cite it!
+@InProceedings{Kim_2022_CVPR,
+    author    = {Kim, Gyuhak and Esmaeilpour, Sepideh and Xiao, Changnan and Liu, Bing},
+    title     = {Continual Learning Based on OOD Detection and Task Masking},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+    month     = {June},
+    year      = {2022},
+    pages     = {3856-3866}
+}
 
 # Acknowledgement
 The code uses the source code from [CSI](https://github.com/alinlab/CSI) and [HAT](https://github.com/joansj/hat).

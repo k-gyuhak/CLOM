@@ -6,6 +6,21 @@ model.eval()
 
 P.logger.print(P)
 
+# Create/load Trackers for accuracies and OOD
+P.cil_tracker = Tracker(P)
+if os.path.exists(f'./logs/{P.dataset}/cil_acc_tracker'):
+    P.cil_tracker.mat = torch.load(f'./logs/{P.dataset}/cil_acc_tracker')
+P.cal_cil_tracker = Tracker(P)
+if os.path.exists(f'./logs/{P.dataset}/cal_cil_acc_tracker'):
+    P.cal_cil_tracker.mat = torch.load(f'./logs/{P.dataset}/cal_cil_acc_tracker')
+P.til_tracker = Tracker(P)
+if os.path.exists(f'./logs/{P.dataset}/til_acc_tracker'):
+    P.til_tracker.mat = torch.load(f'./logs/{P.dataset}/til_acc_tracker')
+P.auc_tracker = AUCTracker(P)
+if os.path.exists(f'./logs/{P.dataset}/auc_tracker'):
+    P.auc_tracker.mat = torch.load(f'./logs/{P.dataset}/auc_tracker')
+
+
 # Train calibration
 if P.mode == 'cil_pre':
     from evals import cil_pre
@@ -69,9 +84,9 @@ else:
     raise NotImplementedError()
 
 P.logger.print()
-if P.mode == 'ood':
-    P.logger.print("AUC result")
-    P.auc_tracker.print_result(P.t, type='acc')
+# if P.mode == 'ood':
+#     P.logger.print("AUC result")
+#     P.auc_tracker.print_result(P.t, type='acc')
 if P.mode == 'cil':
     P.logger.print("CIL result")
     P.cil_tracker.print_result(P.cil_task, type='acc')
@@ -86,9 +101,9 @@ if P.mode == 'test_marginalized_acc':
     P.til_tracker.print_result(P.t, type='forget')
 P.logger.print()
 
-torch.save(P.cil_tracker.mat, f'./logs/{P.dataset}/cil_acc_mat')
-torch.save(P.cal_cil_tracker.mat, f'./logs/{P.dataset}/cal_cil_acc_mat')
-torch.save(P.til_tracker.mat, f'./logs/{P.dataset}/til_acc_mat')
-torch.save(P.auc_tracker.mat, f'./logs/{P.dataset}/auc_mat')
+torch.save(P.cil_tracker.mat, f'./logs/{P.dataset}/cil_acc_tracker')
+torch.save(P.cal_cil_tracker.mat, f'./logs/{P.dataset}/cal_cil_acc_tracker')
+torch.save(P.til_tracker.mat, f'./logs/{P.dataset}/til_acc_tracker')
+torch.save(P.auc_tracker.mat, f'./logs/{P.dataset}/auc_tracker')
 
 P.logger.print('\n\n\n\n\n\n\n\n')

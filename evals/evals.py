@@ -13,7 +13,7 @@ from sklearn.metrics import roc_auc_score
 
 import models.transform_layers as TL
 from utils.temperature_scaling import _ECELoss
-from utils.utils import AverageMeter, set_random_seed, normalize, md
+from utils.utils import AverageMeter, set_random_seed, normalize, md, auc
 
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -111,15 +111,20 @@ def cil(P, model, loaders, steps, marginal=False, logger=None, T=None, w=None, b
     mode = model.training
     model.eval()
 
+    scores_dict = {}
+    outputs_tasks, targets_tasks = [], []
     for data_id, loader in loaders.items():
         error_top1 = AverageMeter()
         error_calibration = AverageMeter()
+        outputs_all, targets_all = [], []
+        scores_all = []
         for n, (images, labels) in enumerate(loader): # loader is in_loader
             images, labels = images.to(device), labels.to(device)
             batch_size = images.size(0)
 
             # For a batch, obtain outputs from each task networks and concatenate for cil
             cil_outputs = torch.tensor([]).to(device)
+            scores_batch = []
             for t in range(P.cil_task + 1):
                 # For ensemble prediction
                 outputs = 0
@@ -138,6 +143,9 @@ def cil(P, model, loaders, steps, marginal=False, logger=None, T=None, w=None, b
                     new_outputs = outputs
                     cil_outputs = torch.cat((cil_outputs, new_outputs.detach()), dim=1)
 
+                scores, _ = torch.max(new_outputs, dim=1, keepdim=True)
+                scores_batch.append(scores)
+
             # Top 1 error. Accuracy is 100 - error.
             top1, = error_k(cil_outputs.data, labels, ks=(1,))
             error_top1.update(top1.item(), batch_size)
@@ -146,18 +154,40 @@ def cil(P, model, loaders, steps, marginal=False, logger=None, T=None, w=None, b
             ece = ece_criterion(cil_outputs, labels) * 100
             error_calibration.update(ece.item(), batch_size)
 
+            outputs_all.append(cil_outputs.data.cpu().numpy())
+            targets_all.append(labels.data.cpu().numpy())
+
+            scores_batch = torch.cat(scores_batch, dim=1)
+            scores_all.append(scores_batch.cpu().numpy())
+
             if n % 100 == 0:
                 P.logger.print('[Test %3d] [Test@1 %.3f] [100-ECE %.3f]' %
                      (n, 100-error_top1.value, 100-error_calibration.value))
 
-        P.logger.print(' * [ACC@1 %.3f] [100-ECE %.3f]' %
-             (100-error_top1.average, 100-error_calibration.average))
+        P.logger.print('[Data id %3d] [ACC@1 %.3f] [100-ECE %.3f]' %
+             (data_id, 100-error_top1.average, 100-error_calibration.average))
         if P.mode == 'cil':
-            P.cil_tracker.update(100 - error_top1.average, int(P.logout.split('task_')[-1]), data_id)
+            P.cil_tracker.update(100 - error_top1.average, P.cil_task, data_id)
         elif P.mode == 'cil_pre':
-            P.cal_cil_tracker.update(100 - error_top1.average, int(P.logout.split('task_')[-1]), data_id)
+            P.cal_cil_tracker.update(100 - error_top1.average, P.cil_task, data_id)
         else:
             raise NotImplementedError()
+
+        outputs_all = np.concatenate(outputs_all)
+        targets_all = np.concatenate(targets_all)
+        scores_all  = np.concatenate(scores_all)
+
+        scores_dict[data_id] = scores_all
+        outputs_tasks.append(outputs_all)
+        targets_tasks.append(targets_all)
+
+    if len(loaders) == P.cil_task + 1:
+        torch.save([outputs_tasks, targets_tasks], f'{P.logout}/outputs_labels_list_{data_id}')
+        for data_id in range(P.cil_task + 1):
+            auc(scores_dict, data_id, P.auc_tracker)
+
+        P.logger.print("Softmax AUC result")
+        P.auc_tracker.print_result(len(loaders) - 1, type='acc')
 
     model.train(mode)
     return error_top1.average

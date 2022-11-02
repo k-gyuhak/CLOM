@@ -33,24 +33,6 @@ P.n_cls_per_task = n_cls_per_task
 P.total_cls = total_cls
 P.n_tasks = int(total_cls // n_cls_per_task)
 
-# Create/load Trackers for accuracies and OOD
-P.cil_tracker = Tracker(P)
-if os.path.exists(f'./logs/{P.dataset}/cil_acc_mat'):
-    P.cil_tracker.mat = torch.load(f'./logs/{P.dataset}/cil_acc_mat')
-P.cal_cil_tracker = Tracker(P)
-if os.path.exists(f'./logs/{P.dataset}/cal_cil_acc_mat'):
-    P.cal_cil_tracker.mat = torch.load(f'./logs/{P.dataset}/cal_cil_acc_mat')
-P.til_tracker = Tracker(P)
-if os.path.exists(f'./logs/{P.dataset}/til_acc_mat'):
-    P.til_tracker.mat = torch.load(f'./logs/{P.dataset}/til_acc_mat')
-P.auc_tracker = AUCTracker(P)
-if os.path.exists(f'./logs/{P.dataset}/auc_mat'):
-    P.auc_tracker.mat = torch.load(f'./logs/{P.dataset}/auc_mat')
-
-# # CIL accuracy, calibration accuracy, TIL accuracy are the same for task=0
-# if int(P.logout.split('task_')[-1]) == 1:
-#     P.cil_tracker.mat = deepcopy(P.til_tracker.mat)
-#     P.cal_cil_tracker.mat = deepcopy(P.til_tracker.mat)
 
 if P.mode == 'cil' or P.mode == 'test_marginalized_acc':
     test_loaders = {}

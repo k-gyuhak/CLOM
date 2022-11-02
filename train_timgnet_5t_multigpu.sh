@@ -25,16 +25,6 @@ python train.py \
 --epoch 100 \
 --t $t
 
-# OOD AUROC
-CUDA_VISIBLE_DEVICES=0 \
-python eval.py \
---mode ood \
---print_score \
---dataset tinyImagenet_5t \
---model resnet18 \
---t $t \
---printfn 'ood.txt'
-
 # ACCURACY & ECE
 CUDA_VISIBLE_DEVICES=0 \
 python eval.py \
@@ -45,7 +35,6 @@ python eval.py \
 --all_dataset \
 --printfn 'til.txt'
 
-# It does not matter what value to choose for --t when --all_dataset is used
 CUDA_VISIBLE_DEVICES=0 \
 python eval.py \
 --mode cil \
@@ -93,16 +82,6 @@ do
 	--epoch 100 \
 	--t $t
 
-	# OOD AUROC
-	CUDA_VISIBLE_DEVICES=0 \
-	python eval.py \
-	--mode ood \
-	--print_score \
-	--dataset tinyImagenet_5t \
-	--model resnet18 \
-	--t $t \
-	--printfn 'ood.txt'
-
 	# ACCURACY & ECE
 	CUDA_VISIBLE_DEVICES=0 \
 	python eval.py \
@@ -113,7 +92,6 @@ do
 	--all_dataset \
 	--printfn 'til.txt'
 
-	# It does not matter what value to choose for --t when --all_dataset is used
 	CUDA_VISIBLE_DEVICES=0 \
 	python eval.py \
 	--mode cil \
