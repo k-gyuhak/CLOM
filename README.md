@@ -3,7 +3,9 @@
 This is the official repository of Continual Learning Based on OOD Detection and Task Masking ([CLOM](https://arxiv.org/abs/2203.09450)) (CVPRW 2022)
 
 # Note
-Check out our new paper ([link](url)) published at NeurIPS 2022. It provides a theoretical analysis/justification/generalization of the proposed method CLOM and all other CIL methods.
+Check out our related papers.
+([WPTP](url)) (NeurIPS 2022). It provides a theoretical analysis/justification/generalization of the proposed method CLOM, and it also shows necessary and sufficient conditions for CIL models.
+([MORE](https://arxiv.org/abs/2208.09734)) (CoLLAs 2022). It is a novel replay-based method based on OOD detection. The proposed method requires little exemplars and can perform OOD detection in the continual learning setting.
 
 # Environments
 
