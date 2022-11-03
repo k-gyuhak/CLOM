@@ -4,8 +4,8 @@ This is the official repository of Continual Learning Based on OOD Detection and
 
 # Note
 Check out our related papers.
-([WPTP](url)) (NeurIPS 2022). It provides a theoretical analysis/justification/generalization of the proposed method CLOM, and it also shows necessary and sufficient conditions for CIL models.
-([MORE](https://arxiv.org/abs/2208.09734)) (CoLLAs 2022). It is a novel replay-based method based on OOD detection. The proposed method requires little exemplars and can perform OOD detection in the continual learning setting.
+- A Theoretical Study on Solving Continual Learning, NeurIPS 2022  [[PDF](url)]. It provides a theoretical analysis/justification/generalization of any CIL methods including CLOM, and it also shows necessary and sufficient conditions for good CIL performances.
+- A Multi-Head Model for Continual Learning via Out-of-Distribution Replay, CoLLAs 2022 [[PDF](https://arxiv.org/abs/2208.09734)]. It is a novel replay method based on OOD detection. The proposed method requires little exemplars and can perform OOD detection in the continual learning setting.
 
 # Environments
 
